@@ -3,6 +3,7 @@ package com.flickr.demo.flickrdemo.presentation.ui
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.TextView
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.text.HtmlCompat
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.flickr.demo.flickrdemo.R
@@ -157,15 +160,7 @@ fun DetailsScreen(
                             }
                     )
 
-                    Text(
-                        text = thumbnail.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier
-                            .animateContentSize()
-                            .semantics {
-                                contentDescription = "Description: ${thumbnail.description}"
-                            }
-                    )
+                    HtmlText(html = thumbnail.description)
 
                     Text(
                         text = "Author: ${thumbnail.link}",
@@ -207,10 +202,16 @@ fun DetailsScreen(
             }
         }
     }
-
-
 }
 
+@Composable
+fun HtmlText(html: String, modifier: Modifier = Modifier) {
+    AndroidView(
+        modifier = modifier,
+        factory = { context -> TextView(context) },
+        update = { it.text = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT) }
+    )
+}
 
 fun shareThumbnail(thumbnail: Items, context: Context) {
 
